@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TitleStrategy } from '@angular/router';
 import { subscribeOn } from 'rxjs';
 
@@ -8,21 +8,23 @@ import { subscribeOn } from 'rxjs';
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.css']
 })
-export class PostsComponent {
+export class PostsComponent implements OnInit {
 
   posts!: any[];
   private url = 'https://jsonplaceholder.typicode.com/posts';
 
   constructor(private http: HttpClient) {
 
-    http.get(this.url)
-      .subscribe(res => {
+  }
 
+  // life-cycle-hook
+  ngOnInit() {
+    this.http.get(this.url)
+      .subscribe(res => {
         this.posts = (res as any[]);
-        // this.posts = JSON.parse(JSON.stringify(res));
+        // this.posts = JSON.parse(JSON.stringify(res)); // This also works
         // console.log(this.posts);
       });
-
   }
 
   createPost(input: HTMLInputElement) {
@@ -55,5 +57,17 @@ export class PostsComponent {
         console.log(res);
       });
   }
+
+  deletePost(post: any) {
+    this.http.delete(this.url + '/' + post.id)
+      .subscribe(res => {
+        let index = this.posts.indexOf(post);
+        this.posts.splice(index, 1);
+
+        console.log(res);
+      })
+  }
+
+
 
 }
