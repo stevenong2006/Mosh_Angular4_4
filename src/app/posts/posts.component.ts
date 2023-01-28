@@ -1,7 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+
 import { Component, OnInit } from '@angular/core';
-import { TitleStrategy } from '@angular/router';
-import { subscribeOn } from 'rxjs';
+import { PostService } from '../services/post.service';
 
 @Component({
   selector: 'posts',
@@ -11,15 +10,16 @@ import { subscribeOn } from 'rxjs';
 export class PostsComponent implements OnInit {
 
   posts!: any[];
-  private url = 'https://jsonplaceholder.typicode.com/posts';
 
-  constructor(private http: HttpClient) {
+
+  constructor(private service: PostService) {
 
   }
 
   // life-cycle-hook
   ngOnInit() {
-    this.http.get(this.url)
+
+    this.service.getPosts()
       .subscribe(res => {
         this.posts = (res as any[]);
         // this.posts = JSON.parse(JSON.stringify(res)); // This also works
@@ -32,7 +32,7 @@ export class PostsComponent implements OnInit {
     let post: any = { title: input.value };
     input.value = '';
 
-    this.http.post(this.url, JSON.stringify(post))
+    this.service.createPost(post)
       .subscribe(res => {
 
         // Convert res to json object
@@ -47,27 +47,25 @@ export class PostsComponent implements OnInit {
 
   updatePost(post: any) {
 
-    //  Use this if (1) API supports it (uncommon)
-    // this.http.patch(this.url + '/' + post.id, JSON.stringify({ isRead: true }))
-    //   .subscribe(res => {
-    //     console.log(res);
-    //   })
-    this.http.put(this.url + '/' + post.id, JSON.stringify(post))
+    //  Use this if (1) API supports the 'patch' protocol (uncommon)
+    this.service.updateByPatch(post)
+      .subscribe(res => {
+        console.log(res);
+      });
+
+    this.service.updateByPutPost(post)
       .subscribe(res => {
         console.log(res);
       });
   }
 
   deletePost(post: any) {
-    this.http.delete(this.url + '/' + post.id)
+    this.service.deletePost(post.id)
       .subscribe(res => {
         let index = this.posts.indexOf(post);
         this.posts.splice(index, 1);
-
         console.log(res);
       })
   }
-
-
 
 }
