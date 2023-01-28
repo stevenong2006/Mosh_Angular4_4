@@ -43,4 +43,17 @@ export class PostsComponent {
       })
   }
 
+  updatePost(post: any) {
+
+    //  Use this if (1) API supports it (uncommon)
+    // this.http.patch(this.url + '/' + post.id, JSON.stringify({ isRead: true }))
+    //   .subscribe(res => {
+    //     console.log(res);
+    //   })
+    this.http.put(this.url + '/' + post.id, JSON.stringify(post))
+      .subscribe(res => {
+        console.log(res);
+      });
+  }
+
 }
