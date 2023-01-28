@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { TitleStrategy } from '@angular/router';
+import { subscribeOn } from 'rxjs';
 
 @Component({
   selector: 'posts',
@@ -10,18 +11,36 @@ import { TitleStrategy } from '@angular/router';
 export class PostsComponent {
 
   posts!: any[];
+  private url = 'https://jsonplaceholder.typicode.com/posts';
 
-  constructor(http: HttpClient) {
+  constructor(private http: HttpClient) {
 
-    http.get('https://jsonplaceholder.typicode.com/posts')
+    http.get(this.url)
       .subscribe(res => {
 
         this.posts = (res as any[]);
-
         // this.posts = JSON.parse(JSON.stringify(res));
         // console.log(this.posts);
       });
 
+  }
+
+  createPost(input: HTMLInputElement) {
+
+    let post: any = { title: input.value };
+    input.value = '';
+
+    this.http.post(this.url, JSON.stringify(post))
+      .subscribe(res => {
+
+        // Convert res to json object
+        let response = JSON.parse(JSON.stringify(res));
+
+        post['id'] = response.id
+        this.posts.splice(0, 0, post);
+
+        // console.log(post);
+      })
   }
 
 }
