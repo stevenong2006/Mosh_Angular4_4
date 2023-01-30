@@ -24,6 +24,9 @@ export class PostsComponent implements OnInit {
         this.posts = (res as any[]);
         // this.posts = JSON.parse(JSON.stringify(res)); // This also works
         // console.log(this.posts);
+      }, error => {
+        alert('An unexpected error occurred.');
+        console.log(error);
       });
   }
 
@@ -42,7 +45,11 @@ export class PostsComponent implements OnInit {
         this.posts.splice(0, 0, post);
 
         // console.log(post);
-      })
+      },
+        error => {
+          alert('An unexpected error occurred.');
+          console.log(error);
+        })
   }
 
   updatePost(post: any) {
@@ -51,21 +58,38 @@ export class PostsComponent implements OnInit {
     this.service.updateByPatch(post)
       .subscribe(res => {
         console.log(res);
-      });
+      },
+        error => {
+          alert('An unexpected error occurred.');
+          console.log(error);
+        });
 
     this.service.updateByPutPost(post)
       .subscribe(res => {
         console.log(res);
+      }, error => {
+        alert('An unexpected error occurred.');
+        console.log(error);
       });
   }
 
   deletePost(post: any) {
-    this.service.deletePost(post.id)
+    // this.service.deletePost(post.id)
+    this.service.deletePost(345)
       .subscribe(res => {
         let index = this.posts.indexOf(post);
         this.posts.splice(index, 1);
         console.log(res);
-      })
+      },
+        (error: Response) => {
+
+          console.log(error);
+          if (error.status === 404)
+            alert('This post has already been deleted.');
+          else {
+            alert('An unexpected error occurred.');
+          }
+        });
   }
 
 }
