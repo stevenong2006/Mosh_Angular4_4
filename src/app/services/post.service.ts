@@ -1,32 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { DataService } from './data-service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
-export class PostService {
-
-  private url = 'http://localhost:3000/posts';
-
-  constructor(private http: HttpClient) { }
-
-  getPosts() {
-    return this.http.get(this.url);
-  }
-
-  createPost(post: any) {
-    return this.http.post(this.url, JSON.stringify(post));
-  }
-
-  updateByPutPost(post: any) {
-    return this.http.put(this.url + '/' + post.id, JSON.stringify(post));
-  }
-
-  updateByPatch(post: any) {
-    return this.http.patch(this.url + '/' + post.id, JSON.stringify({ isRead: true }));
-  }
-
-  deletePost(id: any) {
-    return this.http.delete(this.url + '/' + id);
+export class PostService extends DataService{
+  constructor(http: HttpClient) {
+    super("http://localhost:3000/posts", http);
   }
 }
